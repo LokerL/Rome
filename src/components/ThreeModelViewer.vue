@@ -343,84 +343,110 @@ const loadModel = (url) => {
   isLoading.value = true;
   loadProgress.value = 0;
 
-  // 反向查找 modelUrl 对应的原始 glob key，拿到其所在目录，
-  // 这样可将 GLTF 内部引用的相对路径映射到正确的构建后 URL。
+  // 反向查找 modelUrl 对应的原始 glob key，拿到其所在目录
+  // 例如：url = "/assets/Colosseo-Roma-xxx.gltf"（构建后）
+  // 找到：key = "../assets/model/Colosseo-Roma/Colosseo-Roma.gltf"
+  // 得到：baseDirKey = "../assets/model/Colosseo-Roma/"
   currentModelKey = null;
   currentModelBaseDirKey = null;
+
   for (const [key, builtUrl] of Object.entries(assetModules)) {
     if (builtUrl === url) {
-      currentModelKey = key; // 形如 ../assets/model/sistine-creation/capella_sistina/scene.gltf
+      currentModelKey = key;
+      console.log(`[loadModel] 找到模型文件: ${key}`);
       break;
     }
   }
+
   if (currentModelKey) {
-    currentModelBaseDirKey = currentModelKey.replace(/[^/]+$/, ""); // 去掉文件名，保留目录，以 / 结尾
+    // 去掉文件名，保留目录路径（以 / 结尾）
+    currentModelBaseDirKey = currentModelKey.replace(/[^/]+$/, "");
+    console.log(`[loadModel] 模型所在目录: ${currentModelBaseDirKey}`);
+  } else {
+    console.warn(`[loadModel] 未找到模型文件的 glob key: ${url}`);
   }
 
-  // 构建 URLModifier：将 GLTF 请求到的相对路径映射成构建后 URL
+  // 构建 URLModifier：将 GLTF 内部引用的相对路径映射成 Vite 构建后的 URL
   const manager = new THREE.LoadingManager();
   manager.setURLModifier((requestedUrl) => {
     try {
       // data: / http(s): 直接放行
       if (/^(data:|https?:)/i.test(requestedUrl)) return requestedUrl;
 
-      // 取出相对路径部分
+      console.log(`[URLModifier] 处理请求: ${requestedUrl}`);
+
+      // 提取纯相对路径（GLTF 内部引用通常是纯相对路径）
       let relativePath = requestedUrl;
 
-      // 如果是绝对URL，提取pathname
-      try {
-        const u = new URL(requestedUrl, window.location.href);
-        relativePath = u.pathname;
-      } catch (_) {
-        // 已经是相对路径，保持原样
+      // 如果是绝对 URL，提取 pathname
+      if (requestedUrl.startsWith('http') || requestedUrl.startsWith('/')) {
+        try {
+          const u = new URL(requestedUrl, window.location.href);
+          relativePath = u.pathname;
+          // 移除可能的前导斜杠和 assets/ 前缀
+          relativePath = relativePath.replace(/^\/+/, '').replace(/^assets\//, '');
+        } catch (_) {
+          // 解析失败，保持原样
+        }
       }
 
-      // 移除可能的前导斜杠和 assets/ 前缀
-      relativePath = relativePath.replace(/^\/+/, '').replace(/^assets\//, '');
+      console.log(`[URLModifier] 相对路径: ${relativePath}`);
 
-      // 如果有当前模型的目录信息，优先在同目录下查找
+      // 优先策略：在当前模型目录下查找（处理 scene.bin 和 textures/* 等相对引用）
       if (currentModelBaseDirKey) {
-        // 尝试1: 直接拼接相对路径
-        const directKey = normalizeAssetKey(`${currentModelBaseDirKey}${relativePath}`);
-        if (assetModules[directKey]) {
-          console.log(`[URLModifier] 匹配成功: ${requestedUrl} -> ${directKey}`);
-          return assetModules[directKey];
+        // 拼接：模型目录 + 相对路径
+        // 例如：../assets/model/Colosseo-Roma/ + scene.bin
+        //       ../assets/model/Colosseo-Roma/ + textures/BuildingMat-xxx.png
+        const targetKey = normalizeAssetKey(`${currentModelBaseDirKey}${relativePath}`);
+
+        if (assetModules[targetKey]) {
+          console.log(`[URLModifier] ✓ 同目录匹配: ${targetKey}`);
+          return assetModules[targetKey];
         }
 
-        // 尝试2: URL编码处理
+        // 尝试 URL 编码版本（处理文件名中的空格等特殊字符）
         const encodedPath = encodeURI(relativePath);
         const encodedKey = normalizeAssetKey(`${currentModelBaseDirKey}${encodedPath}`);
         if (assetModules[encodedKey]) {
-          console.log(`[URLModifier] 编码匹配成功: ${requestedUrl} -> ${encodedKey}`);
+          console.log(`[URLModifier] ✓ 编码匹配: ${encodedKey}`);
           return assetModules[encodedKey];
         }
+
+        console.warn(`[URLModifier] ✗ 同目录未找到: ${targetKey}`);
       }
 
-      // 兜底1: 在全局assets中搜索完全匹配的路径
+      // 兜底1：全局路径匹配（完整路径匹配）
+      const normalizedRelPath = normalizeAssetKey(relativePath);
       for (const [key, builtUrl] of Object.entries(assetModules)) {
-        if (key.endsWith(relativePath) || key.endsWith(`/${relativePath}`)) {
-          console.log(`[URLModifier] 全局路径匹配: ${requestedUrl} -> ${key}`);
+        const normalizedKey = normalizeAssetKey(key);
+        if (normalizedKey.endsWith(normalizedRelPath) ||
+            normalizedKey.endsWith(`/${normalizedRelPath}`)) {
+          console.log(`[URLModifier] ✓ 全局匹配: ${key}`);
           return builtUrl;
         }
       }
 
-      // 兜底2: 按文件名匹配(仅当唯一时)
+      // 兜底2：文件名匹配（仅当唯一时，避免歧义）
       const fileName = relativePath.split("/").pop();
       if (fileName) {
         const candidates = Object.entries(assetModules).filter(([k]) =>
           k.endsWith(`/${fileName}`)
         );
         if (candidates.length === 1) {
-          console.log(`[URLModifier] 文件名匹配: ${requestedUrl} -> ${candidates[0][0]}`);
+          console.log(`[URLModifier] ✓ 文件名匹配: ${candidates[0][0]}`);
           return candidates[0][1];
+        } else if (candidates.length > 1) {
+          console.warn(`[URLModifier] 文件名 "${fileName}" 存在多个匹配，跳过:`, candidates.map(c => c[0]));
         }
       }
 
-      // 找不到映射，警告并返回原路径
-      console.warn(`[URLModifier] 未找到匹配: ${requestedUrl}, 相对路径: ${relativePath}`);
+      // 找不到映射
+      console.error(`[URLModifier] ✗ 未找到匹配: ${requestedUrl}`);
+      console.error(`  - 相对路径: ${relativePath}`);
+      console.error(`  - 模型目录: ${currentModelBaseDirKey || 'N/A'}`);
       return requestedUrl;
     } catch (e) {
-      console.error(`[URLModifier] 处理失败:`, e);
+      console.error(`[URLModifier] 异常:`, e);
       return requestedUrl;
     }
   });

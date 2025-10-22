@@ -350,7 +350,7 @@ const scenesDatabase = {
         period: "公元1世纪",
         location: "椭圆中央区域，覆于木制平台之上。",
         mediaType: "model",
-        mediaSrc: "model/Colosseo-Roma.gltf",
+        mediaSrc: "model/Colosseo-Roma/Colosseo-Roma.gltf",
         description: [
           "原始竞技场地面由木板铺设，并覆盖黄色沙层（Arena一词即源于“沙”），吸收血迹并提供防滑表面。",
           "现代修复的舞台展示了部分木板结构，让观众得以俯瞰地下层布局并感受角斗发生的空间尺度。",
@@ -553,7 +553,7 @@ const scenesDatabase = {
         period: "1508-1512年",
         location: "穹顶中央九幅画面讲述《创世纪》。",
         mediaType: "model",
-        mediaSrc: "model/sistine-creation/capella_sistina/scene.gltf",
+        mediaSrc: "model/sistine-creation/scene.gltf",
         description: [
           "穹顶的九幅核心画面从《光暗之分》到《诺亚醉酒》，逐步呈现世界的创造、堕落与救赎。最著名的《创造亚当》描绘上帝指尖即将触碰亚当，象征生命传递。",
           "环绕核心画面的是先知与西比尔女巫，他们肩负传递救世预言的使命，与旧约人物共同构成宏大的神圣叙事。",
@@ -577,8 +577,7 @@ const scenesDatabase = {
         period: "1536-1541年",
         location: "祭坛墙面巨幅壁画，俯瞰整个教堂。",
         mediaType: "image",
-        mediaSrc:
-          "https://upload.wikimedia.org/wikipedia/commons/f/f2/Michelangelo_Last_Judgement_%28cropped%29.jpg",
+        mediaSrc: "imgs/Eljuiciofinal-encuentra.com_.jpg",
         description: [
           "《最后的审判》描绘基督在末日审判世人的场景，上方圣徒环绕，中央的基督手势象征裁决，下方是复活与坠入地狱的灵魂。",
           "米开朗基罗在此采用大胆的动态构图与肌肉刻画，反映宗教改革时期的紧张氛围。后期为遵守教会规范，部分裸体被披上“贞洁布”。",
@@ -602,8 +601,7 @@ const scenesDatabase = {
         period: "1508-1512年",
         location: "穹顶两侧拱券，交替排列七名先知与五位西比尔。",
         mediaType: "image",
-        mediaSrc:
-          "https://upload.wikimedia.org/wikipedia/commons/5/5d/Delphic_Sibyl_Michelangelo.jpg",
+        mediaSrc: "imgs/CAPPELLA_SISTINA_Ceiling-scaled.webp",
         description: [
           "西比尔是古典神话中的女先知，与旧约先知呼应，象征救主降临的普世预言。米开朗基罗以雕塑般的体量描绘她们，赋予女性人物前所未有的力量感。",
           "每位先知与西比尔身旁都有少年助手或天使，辅助传达神启讯息。",
