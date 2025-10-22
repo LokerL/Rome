@@ -1,0 +1,11 @@
+Model Information:
+* title:	Colosseo-Roma
+* source:	https://sketchfab.com/3d-models/colosseo-roma-d15ffef10d2a47fa866aade8d342c25e
+* author:	rosaliarenda (https://sketchfab.com/rosaliarenda)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Colosseo-Roma" (https://sketchfab.com/3d-models/colosseo-roma-d15ffef10d2a47fa866aade8d342c25e) by rosaliarenda (https://sketchfab.com/rosaliarenda) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
