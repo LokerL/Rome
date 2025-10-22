@@ -69,6 +69,19 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+// 让构建产物包含所有 assets，并获得其构建后的 URL
+// 注意：GLTF 内部引用的 scene.bin / textures 无法被 Vite 自动重写，
+// 需要在加载阶段用 URLModifier 将它们映射到打包后的真实 URL。
+const assetModules = import.meta.glob("../assets/**/*", {
+  eager: true,
+  as: "url",
+});
+
+const normalizeAssetKey = (path) => {
+  if (!path) return null;
+  return path.replace(/^[./\\]+/, "").replace(/\\/g, "/");
+};
+
 const props = defineProps({
   sceneId: {
     type: String,
@@ -102,6 +115,8 @@ let controls = null;
 let modelGroup = null;
 let animationId = null;
 let disposeCurrentModel = null;
+let currentModelKey = null; // 例如: ../assets/model/.../scene.gltf
+let currentModelBaseDirKey = null; // 例如: ../assets/model/.../
 
 const initialCameraPos = new THREE.Vector3();
 const initialTarget = new THREE.Vector3();
@@ -328,7 +343,89 @@ const loadModel = (url) => {
   isLoading.value = true;
   loadProgress.value = 0;
 
-  const loader = new GLTFLoader();
+  // 反向查找 modelUrl 对应的原始 glob key，拿到其所在目录，
+  // 这样可将 GLTF 内部引用的相对路径映射到正确的构建后 URL。
+  currentModelKey = null;
+  currentModelBaseDirKey = null;
+  for (const [key, builtUrl] of Object.entries(assetModules)) {
+    if (builtUrl === url) {
+      currentModelKey = key; // 形如 ../assets/model/sistine-creation/capella_sistina/scene.gltf
+      break;
+    }
+  }
+  if (currentModelKey) {
+    currentModelBaseDirKey = currentModelKey.replace(/[^/]+$/, ""); // 去掉文件名，保留目录，以 / 结尾
+  }
+
+  // 构建 URLModifier：将 GLTF 请求到的相对路径映射成构建后 URL
+  const manager = new THREE.LoadingManager();
+  manager.setURLModifier((requestedUrl) => {
+    try {
+      // data: / http(s): 直接放行
+      if (/^(data:|https?:)/i.test(requestedUrl)) return requestedUrl;
+
+      // 取出相对路径部分
+      let relativePath = requestedUrl;
+
+      // 如果是绝对URL，提取pathname
+      try {
+        const u = new URL(requestedUrl, window.location.href);
+        relativePath = u.pathname;
+      } catch (_) {
+        // 已经是相对路径，保持原样
+      }
+
+      // 移除可能的前导斜杠和 assets/ 前缀
+      relativePath = relativePath.replace(/^\/+/, '').replace(/^assets\//, '');
+
+      // 如果有当前模型的目录信息，优先在同目录下查找
+      if (currentModelBaseDirKey) {
+        // 尝试1: 直接拼接相对路径
+        const directKey = normalizeAssetKey(`${currentModelBaseDirKey}${relativePath}`);
+        if (assetModules[directKey]) {
+          console.log(`[URLModifier] 匹配成功: ${requestedUrl} -> ${directKey}`);
+          return assetModules[directKey];
+        }
+
+        // 尝试2: URL编码处理
+        const encodedPath = encodeURI(relativePath);
+        const encodedKey = normalizeAssetKey(`${currentModelBaseDirKey}${encodedPath}`);
+        if (assetModules[encodedKey]) {
+          console.log(`[URLModifier] 编码匹配成功: ${requestedUrl} -> ${encodedKey}`);
+          return assetModules[encodedKey];
+        }
+      }
+
+      // 兜底1: 在全局assets中搜索完全匹配的路径
+      for (const [key, builtUrl] of Object.entries(assetModules)) {
+        if (key.endsWith(relativePath) || key.endsWith(`/${relativePath}`)) {
+          console.log(`[URLModifier] 全局路径匹配: ${requestedUrl} -> ${key}`);
+          return builtUrl;
+        }
+      }
+
+      // 兜底2: 按文件名匹配(仅当唯一时)
+      const fileName = relativePath.split("/").pop();
+      if (fileName) {
+        const candidates = Object.entries(assetModules).filter(([k]) =>
+          k.endsWith(`/${fileName}`)
+        );
+        if (candidates.length === 1) {
+          console.log(`[URLModifier] 文件名匹配: ${requestedUrl} -> ${candidates[0][0]}`);
+          return candidates[0][1];
+        }
+      }
+
+      // 找不到映射，警告并返回原路径
+      console.warn(`[URLModifier] 未找到匹配: ${requestedUrl}, 相对路径: ${relativePath}`);
+      return requestedUrl;
+    } catch (e) {
+      console.error(`[URLModifier] 处理失败:`, e);
+      return requestedUrl;
+    }
+  });
+
+  const loader = new GLTFLoader(manager);
   loader.load(
     url,
     (gltf) => {
