@@ -55,7 +55,7 @@ const scenes = ref([
     name: "罗马广场",
     brief: "古罗马帝国的政治、经济和宗教中心",
     color: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)",
-    image: "2958856.jpg",
+    image: "https://img.j8.je/images/2025/10/24/vCq.jpg",
     icon: "🏛️",
   },
   {
@@ -63,7 +63,7 @@ const scenes = ref([
     name: "罗马斗兽场",
     brief: "古罗马最伟大的竞技场，见证千年历史",
     color: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    image: "389011.jpg",
+    image: "https://img.j8.je/images/2025/10/24/vNV.jpg",
     icon: "🏟️",
   },
   {
@@ -71,7 +71,7 @@ const scenes = ref([
     name: "梵蒂冈博物馆",
     brief: "世界上最伟大的艺术宝库，珍藏无数艺术瑰宝",
     color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-    image: "Inside Vatican Museums.jpg",
+    image: "https://img.j8.je/images/2025/10/24/q7a.jpg",
     icon: "🎨",
   },
   {
@@ -79,7 +79,7 @@ const scenes = ref([
     name: "西斯廷教堂",
     brief: "米开朗基罗的艺术杰作，穹顶壁画震撼人心",
     color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-    image: "Sistine.jpg",
+    image: "https://img.j8.je/images/2025/10/24/qSX.jpg",
     icon: "⛪",
   },
 ]);

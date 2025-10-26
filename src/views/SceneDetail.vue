@@ -251,8 +251,7 @@ const scenesDatabase = {
         period: "公元前54年重建",
         location: "位于广场南侧，凯撒与奥古斯都时期的司法中心。",
         mediaType: "image",
-        mediaSrc:
-          "imgs/Basilica-Julia-at-Roman-Forum-in-city-of-Rome-Italy.jpg",
+        mediaSrc: "https://img.j8.je/images/2025/10/24/Uih.jpg",
         description: [
           "朱利亚大教堂（Basilica Julia）由尤利乌斯·凯撒发起重建，后由奥古斯都完成，用于民事法庭与商业交易。宽阔的大厅内设有多排柱廊，二层阳台为旁听者提供空间。",
           "古罗马的陪审团在此审理贸易纠纷和财产权案件，地面的大理石棋盘刻痕仍记录着等待审理时市民的消遣。",
@@ -300,7 +299,7 @@ const scenesDatabase = {
         period: "公元81年",
         location: "凯旋大道东段，通往帕拉蒂尼山的要道。",
         mediaType: "image",
-        mediaSrc: "imgs/Arch-of-Titus-in-Rome.jpg",
+        mediaSrc: "https://img.j8.je/images/2025/10/24/vtm.jpg",
         description: [
           "提图斯凯旋门纪念提图斯皇帝镇压犹太起义的胜利，是罗马现存最古老的凯旋门之一。门内浮雕描绘罗马军团携带耶路撒冷圣殿七枝烛台的场景。",
           "凯旋仪式中，胜利者将穿过此门进入广场，象征荣耀归来。它也成为后世凯旋门建筑的范本。",
@@ -454,7 +453,7 @@ const scenesDatabase = {
         mediaType: "image",
         mediaSrc:
           // "imgs/The Famous Double Spiral Staircase At The Vatican Museums.jpg",
-          "imgs/637075.jpg",
+          "https://img.j8.je/images/2025/10/24/vqQ.jpg",
         description: [
           "布拉曼特楼梯以双螺旋设计著称，上下行人互不干扰。现代版本由朱塞佩·莫莫设计，灵感来自16世纪原版楼梯。",
           "钢与大理石结合的流线造型，配合自然采光，营造出富有未来感的空间体验，是梵蒂冈博物馆的“压轴”景点。",
