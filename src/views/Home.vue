@@ -2,8 +2,10 @@
   <div class="home-container">
     <!-- 头部标题 -->
     <header class="header">
-      <h1 class="title">探索罗马</h1>
-      <p class="subtitle">发现永恒之城的历史与文化</p>
+      <h1 class="title">Exploring Rome</h1>
+      <p class="subtitle">
+        Discover the history and culture of the Eternal City
+      </p>
     </header>
 
     <!-- 场景卡片网格 -->
@@ -31,7 +33,7 @@
             <h2 class="scene-title">{{ scene.name }}</h2>
             <p class="scene-description">{{ scene.brief }}</p>
             <div class="explore-btn">
-              <span>探索</span>
+              <span>Explore</span>
               <span class="arrow">→</span>
             </div>
           </div>
@@ -52,32 +54,35 @@ const router = useRouter();
 const scenes = ref([
   {
     id: "forum",
-    name: "罗马广场",
-    brief: "古罗马帝国的政治、经济和宗教中心",
+    name: "The Roman Forum",
+    brief:
+      "The political, economic, and religious center of the ancient Roman Empire.",
     color: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)",
     image: "https://img.j8.je/images/2025/10/24/vCq.jpg",
     icon: "🏛️",
   },
   {
     id: "colosseum",
-    name: "罗马斗兽场",
-    brief: "古罗马最伟大的竞技场，见证千年历史",
+    name: "The Coliseum",
+    brief:
+      "The greatest arena in ancient Rome, a witness to a thousand years of history.",
     color: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     image: "https://img.j8.je/images/2025/10/24/vNV.jpg",
     icon: "🏟️",
   },
   {
-    id: "vatican",
-    name: "梵蒂冈博物馆",
-    brief: "世界上最伟大的艺术宝库，珍藏无数艺术瑰宝",
+    id: "Vatican City",
+    name: "Vatican City",
+    brief:
+      "The greatest art treasure trove in the world, home to countless artistic gems.",
     color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
     image: "https://img.j8.je/images/2025/10/24/q7a.jpg",
     icon: "🎨",
   },
   {
     id: "sistine",
-    name: "西斯廷教堂",
-    brief: "米开朗基罗的艺术杰作，穹顶壁画震撼人心",
+    name: "The Sistine Chapel",
+    brief: "The masterpiece of Michelangelo, a pinnacle of Renaissance art.",
     color: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
     image: "https://img.j8.je/images/2025/10/24/qSX.jpg",
     icon: "⛪",
@@ -97,8 +102,8 @@ const handleTouchEnd = () => {
 // 跳转到场景详情
 const goToScene = (id) => {
   // 西斯廷教堂跳转到360视频页面
-  if (id === 'sistine') {
-    router.push({ name: 'SistineChapel360' });
+  if (id === "sistine") {
+    router.push({ name: "SistineChapel360" });
   } else {
     router.push({ name: "SceneDetail", params: { id } });
   }
