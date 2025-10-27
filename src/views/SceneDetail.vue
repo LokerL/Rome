@@ -68,6 +68,25 @@
           </video>
           <div v-else class="media-fallback">暂未提供视频资源</div>
         </div>
+        <div v-else-if="currentMediaType === 'iframe'" class="media-wrapper">
+          <iframe
+            src="//player.bilibili.com/player.html?isOutside=true&aid=330731449&bvid=BV1CA411s7ej&cid=266223401&p=1&high_quality=1"
+            scrolling="no"
+            border="0"
+            frameborder="no"
+            framespacing="0"
+            allowfullscreen="true"
+            sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts"
+          ></iframe>
+          <!-- <iframe
+            :src="currentMediaSrc"
+            scrolling="no"
+            border="0"
+            frameborder="no"
+            framespacing="0"
+            allowfullscreen="true"
+          ></iframe> -->
+        </div>
         <div v-else class="media-wrapper">
           <div class="media-fallback">暂未配置媒体内容</div>
         </div>
@@ -189,6 +208,11 @@ const resolveAssetPath = (path) => {
   if (!normalized) return null;
 
   if (/^(https?:)?\/\//i.test(normalized) || normalized.startsWith("data:")) {
+    return normalized;
+  }
+
+  // start with //
+  if (normalized.startsWith("//")) {
     return normalized;
   }
 
@@ -502,7 +526,8 @@ const scenesDatabase = {
         period: "1509-1511年",
         location: "拉斐尔画室中的签字厅，象征哲学学科。",
         mediaType: "video",
-        mediaSrc: "videos/vatican-school-of-athens.mp4",
+        mediaSrc:
+          "https://dy-rooms-1259317024.cos.ap-shanghai.myqcloud.com/vatican-school-of-athens.mp4",
         description: [
           "《雅典学院》集合古代哲学大师于同一空间，柏拉图与亚里士多德居中而立，呈现理性与经验的对话。",
           "拉斐尔巧妙地将同时代艺术家入画：柏拉图面孔借鉴达·芬奇，赫拉克利特则是米开朗基罗的肖像。",
@@ -545,6 +570,27 @@ const scenesDatabase = {
       "进入教堂前需着装得体，肩膀与膝盖需被遮蔽。",
     ],
     highlights: [
+      {
+        id: "sistine-video",
+        name: "西斯廷教堂",
+        icon: "",
+        period: "1508-1512年",
+        location: "穹顶中央九幅画面讲述《创世纪》。",
+        mediaType: "video",
+        mediaSrc: "videos/西斯廷教堂.mp4",
+        description: [,],
+        stats: [
+          { label: "核心画幅", value: "9幅矩形画面" },
+          { label: "人物数量", value: "超过300人" },
+          { label: "绘画技法", value: "湿壁画 + 夸张透视 foreshortening" },
+        ],
+        quickFacts: [
+          "米开朗基罗搭建巨大脚手架，长期仰头作画导致颈背疼痛。",
+          "《创造亚当》成为现代视觉文化引用最多的图像之一。",
+        ],
+        placeholderIcon: "🌌",
+        placeholderColor: "linear-gradient(135deg, #4facfe 0%, #5ce1ff 100%)",
+      },
       {
         id: "sistine-creation",
         name: "《创世纪》穹顶",
@@ -829,6 +875,12 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.3);
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
 }
 
 .media-element {

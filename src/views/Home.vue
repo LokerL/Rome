@@ -96,7 +96,12 @@ const handleTouchEnd = () => {
 
 // 跳转到场景详情
 const goToScene = (id) => {
-  router.push({ name: "SceneDetail", params: { id } });
+  // 西斯廷教堂跳转到360视频页面
+  if (id === 'sistine') {
+    router.push({ name: 'SistineChapel360' });
+  } else {
+    router.push({ name: "SceneDetail", params: { id } });
+  }
 };
 </script>
 
