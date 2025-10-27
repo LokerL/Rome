@@ -71,7 +71,7 @@ const scenes = ref([
     icon: "🏟️",
   },
   {
-    id: "Vatican City",
+    id: "vatican",
     name: "Vatican City",
     brief:
       "The greatest art treasure trove in the world, home to countless artistic gems.",
